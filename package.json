@@ -1,7 +1,7 @@
 {
   "name": "@xmader/gulp-v3",
   "description": "The streaming build system",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "homepage": "http://gulpjs.com",
   "repository": "gulpjs/gulp",
   "author": "Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
