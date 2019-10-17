@@ -5,6 +5,32 @@ var Orchestrator = require('orchestrator');
 var gutil = require('gulp-util');
 var deprecated = require('deprecated');
 var vfs = require('vinyl-fs');
+var gaze = require('gaze');
+var EventEmitter = require('events').EventEmitter;
+
+function watch(glob, opt, fn) {
+  var target = new EventEmitter();
+
+  var watcher = gaze(glob, opt, function(err) {
+    if (err) {
+      throw err;
+    }
+  });
+
+  watcher.on('all', function(event, filepath) {
+    var ev = { type: event, path: filepath };
+    target.emit('change', ev);
+    if (fn) {
+      fn(ev);
+    }
+  });
+
+  target.end = function() {
+    watcher.close();
+  };
+
+  return target;
+}
 
 function Gulp() {
   Orchestrator.call(this);
@@ -32,12 +58,12 @@ Gulp.prototype.watch = function(glob, opt, fn) {
 
   // Array of tasks given
   if (Array.isArray(fn)) {
-    return vfs.watch(glob, opt, function() {
+    return watch(glob, opt, function() {
       this.start.apply(this, fn);
     }.bind(this));
   }
 
-  return vfs.watch(glob, opt, fn);
+  return watch(glob, opt, fn);
 };
 
 // Let people use this class from our instance
